@@ -89,7 +89,7 @@ class AddScoreAPIView(CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         super().create(request, *args, **kwargs)
-        return Response({"message": "Opinion added."}, status=201)
+        return Response({"message": "Score added."}, status=201)
 
 
 class ScoreAPIView(RetrieveAPIView):
