@@ -4,5 +4,5 @@ COPY ./requirements.txt /tmp/
 # RUN pip install -r /tmp/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+CMD python manage.py migrate && python manage.py runserver 0.0.0.0:8888
 # CMD ["manage.py", "runserver", "0.0.0.0:8000"]

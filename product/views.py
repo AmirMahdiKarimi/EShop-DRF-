@@ -101,3 +101,5 @@ class ScoreAPIView(RetrieveAPIView):
         product_id = self.kwargs.get('product_id')
         obj = get_object_or_404(self.get_queryset(), id=product_id)
         return obj
+
+
