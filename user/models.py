@@ -40,13 +40,6 @@ class CustomeAuthTokenManager(models.Manager):
         return instance, token
         
 
-    # def filter(self, user, *args, **kwargs):
-    #     return AuthToken.objects.filter(user=user)
-
-    # def all(self):
-    #     return AuthToken.objects.all()
-
 class CustomeAuthToken(AuthToken):
     objects = CustomeAuthTokenManager()
-
     user_agent = models.OneToOneField(UserAgent, on_delete=models.CASCADE)
