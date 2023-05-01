@@ -32,11 +32,12 @@ class ProductAPIView(RetrieveAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
     lookup_field = 'id'
+    lookup_url_kwarg = 'product_id'
     
-    def get_object(self):
-        product_id = self.kwargs.get('product_id')
-        obj = get_object_or_404(self.get_queryset(), id=product_id)
-        return obj
+    # def get_object(self):
+    #     product_id = self.kwargs.get('product_id')
+    #     obj = get_object_or_404(self.get_queryset(), id=product_id)
+    #     return obj
 
 
 class AddOpinionAPIView(CreateAPIView):
@@ -54,17 +55,19 @@ class AddOpinionAPIView(CreateAPIView):
             super().create(request)
         except:
             message = 'You had an opinion for this product.'
-            return Response({'message': message}, status=400)
+            return Response({'message': message}, status=409)
         return Response({"message": "Opinion added."}, status=201)
 
 
 class OpinionListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = OpinionListSerializer
+    queryset = Opinion.objects.all()
+    lookup_field = 'product_id'
     
-    def get_queryset(self):
-        product_id = self.kwargs.get('product_id')
-        return Opinion.objects.filter(product_id=product_id)
+    # def get_queryset(self):
+    #     product_id = self.kwargs.get('product_id')
+    #     return Opinion.objects.filter(product_id=product_id)
 
 
 class AddScoreAPIView(CreateAPIView):
@@ -95,10 +98,10 @@ class AddScoreAPIView(CreateAPIView):
 class ScoreAPIView(RetrieveAPIView):
     serializer_class = ScoreSerializer
     queryset = Product.objects.all()
-    lookup_field = 'id'
-    
-    def get_object(self):
-        product_id = self.kwargs.get('product_id')
-        obj = get_object_or_404(self.get_queryset(), id=product_id)
-        return obj
+    # lookup_field = 'id'
+    lookup_url_kwarg = 'product_id'    
+    # def get_object(self):
+    #     product_id = self.kwargs.get('product_id')
+    #     obj = get_object_or_404(self.get_queryset(), id=product_id)
+    #     return obj
 

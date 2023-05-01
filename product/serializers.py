@@ -10,7 +10,7 @@ class AddProductSerializer(serializers.ModelSerializer):
 
 
     def validate(self, data):
-        if data['price'] <= 0:
+        if data['price'] < 0: 
             raise serializers.ValidationError("Price should be greater than zero.")
         if data['remaining_count'] < 0:
             raise serializers.ValidationError("Remaining count should be positive.")

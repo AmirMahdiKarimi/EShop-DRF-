@@ -25,7 +25,7 @@ class CustomPagination(PageNumberPagination):
 class AddToCartAPIView(CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = AddToCartSerializer
-
+    
     def perform_create(self, serializer):
         user = self.request.user
         cart, created = Cart.objects.get_or_create(user=user, open=True)
@@ -68,7 +68,7 @@ class DeleteFromCartAPIView(DestroyAPIView):
         if products[0] == "all":
             cart_products = CartProduct.objects.filter(cart=cart)
             cart_products.delete()
-            return Response({"message": "All products removed."}, status=202)
+            return Response({"message": "All products removed."}, status=204)
         removed = []
         for remove_product in products:
             try:
@@ -83,7 +83,7 @@ class DeleteFromCartAPIView(DestroyAPIView):
                     removed.append({"id": remove_product, "success": False, "message": "product was not in cart."})
             except:
                 removed.append({"id": remove_product, "success": False, "message": "product not founded!"})
-        return Response({"message": removed}, status=202)
+        return Response({"message": removed}, status=204)
     
 
 class ShopAPIView(RetrieveAPIView):
@@ -93,20 +93,18 @@ class ShopAPIView(RetrieveAPIView):
     def get_object(self):
         try:
             cart = Cart.objects.get(user=self.request.user, open=True)
-            track, created = Track.objects.get_or_create(cart=cart)
-            cart.open = False
-            cart.save()
-            return track
-        except:
+        except Cart.DoesNotExist:
             return False
 
+        track, created = Track.objects.get_or_create(cart=cart)
+        cart.open = False
+        cart.save()
+        return track
+    
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        if instance:
-            serializer = self.get_serializer(instance)
-            data = serializer.data
-            return Response(data)
-        return Response({"message": "You don't have open cart or already bought this cart."})
+        return Response(self.get_serializer(instance).data) if instance else Response({"message": "You don't have open cart or already bought this cart."})
+
         
 
 class TrackListAPIView(ListAPIView):
@@ -121,7 +119,7 @@ class TrackGetAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TrackGetSerializer
     pagination_class = CustomPagination
-    
+
     def get_queryset(self):
         track_id = self.kwargs.get('track_id')
         track = get_object_or_404(Track, track=track_id, cart__user=self.request.user)

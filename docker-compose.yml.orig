@@ -1,0 +1,63 @@
+version: "3"
+
+services:
+  db:
+    image: hub.hamdocker.ir/library/postgres
+    volumes:
+      - db:/var/lib/postgresql/data
+<<<<<<< HEAD
+    # ports:
+    #   - '5432:5432'
+=======
+    ports:
+      - '5432:5432'
+>>>>>>> shop
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+
+
+  redis:
+    image: redis
+<<<<<<< HEAD
+    # ports:
+    #   - "6379:6379"
+=======
+    ports:
+      - "6379:6379"
+>>>>>>> shop
+
+  web:
+    build: .
+    volumes:
+      - .:/tmp
+    ports:
+<<<<<<< HEAD
+      - "8000:8000"
+=======
+      - "8888:8888"
+>>>>>>> shop
+    depends_on:
+      - db
+      - redis
+    environment:
+      DB_HOST: db
+<<<<<<< HEAD
+      
+=======
+>>>>>>> shop
+      DB_NAME: mydb
+      DB_USER: myuser
+      DB_PASSWORD: mypassword
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+<<<<<<< HEAD
+
+=======
+    
+    tty: true
+>>>>>>> shop
+volumes:
+  db:
+    driver: local

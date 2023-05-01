@@ -120,7 +120,7 @@ class SetProfileSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(error)
         if image:
             w, h = get_image_dimensions(image)
-            if w > 1000 or h > 1000:
+            if w > 2000 or h > 2000:
                 error = 'Image size should be less than or equal to 1000x1000 pixels'
                 raise serializers.ValidationError(error)
             

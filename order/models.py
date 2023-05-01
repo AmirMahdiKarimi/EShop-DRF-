@@ -22,10 +22,13 @@ class CartProduct(models.Model):
     def __str__(self) -> str:
         return f"{self.cart}: {self.product} ={self.count}"
     
-    
+
+def uid():
+    return uuid.uuid4().hex
+
 class Track(models.Model):
     cart = models.OneToOneField(Cart, on_delete=models.CASCADE)
-    track = models.UUIDField(default=uuid.uuid4().hex, editable=False, unique=True)
+    track = models.CharField(max_length=64, default=uid, editable=False, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:

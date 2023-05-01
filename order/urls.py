@@ -8,5 +8,5 @@ urlpatterns = [
     path('cart/remove/', views.DeleteFromCartAPIView.as_view()),
     path('shop/', views.ShopAPIView.as_view()),
     path('track/list/', views.TrackListAPIView.as_view()),
-    path('track/get/<uuid:track_id>', views.TrackGetAPIView.as_view()),
+    path('track/get/<str:track_id>', views.TrackGetAPIView.as_view()),
 ]
