@@ -20,43 +20,53 @@ class CustomPagination(PageNumberPagination):
             'page_size': self.page.paginator.per_page,
             'results': data
         })
+
+
+# class AddToCartAPIView(CreateAPIView):
+#     permission_classes = [IsAuthenticated]
+#     serializer_class = AddToCartSerializer
     
+#     def perform_create(self, serializer):
+#         user = self.request.user
+#         cart, created = Cart.objects.get_or_create(user=user, open=True)
+#         products = self.request.data.get('products')
+#         message = []
+#         for add_product in products:
+#             try:
+#                 product = Product.objects.get(id=add_product['id'])
+#                 if product.remaining_count == 0:
+#                     message.append({"id": add_product['id'], "success": False, "message": "product unavailable!"})
+#                 elif product.remaining_count < add_product['count']:
+#                     message.append({"id": add_product['id'], "success": False, "message": "product remaining is not enough!"})
+#                 else: 
+#                     cart_product, created = CartProduct.objects.get_or_create(cart=cart, product=product)
+#                     cart_product.count += add_product['count']
+#                     product.remaining_count -= add_product['count']
+#                     cart_product.save()
+#                     product.save()
+#                     message.append({"id": add_product['id'], "success": True, "message": "product added."})
+#             except:
+#                 message.append({"id": add_product['id'], "success": False, "message": "product not founded!"})
+#         return message
+            
+#     def create(self, request, *args, **kwargs):
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         message = self.perform_create(serializer)
+#         headers = self.get_success_headers(serializer.data)
+#         return Response({"message": message}, status=201)
 
 class AddToCartAPIView(CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = AddToCartSerializer
-    
-    def perform_create(self, serializer):
-        user = self.request.user
-        cart, created = Cart.objects.get_or_create(user=user, open=True)
-        products = self.request.data.get('products')
-        message = []
-        for add_product in products:
-            try:
-                product = Product.objects.get(id=add_product['id'])
-                if product.remaining_count == 0:
-                    message.append({"id": add_product['id'], "success": False, "message": "product unavailable!"})
-                elif product.remaining_count < add_product['count']:
-                    message.append({"id": add_product['id'], "success": False, "message": "product remaining is not enough!"})
-                else: 
-                    cart_product, created = CartProduct.objects.get_or_create(cart=cart, product=product)
-                    cart_product.count += add_product['count']
-                    product.remaining_count -= add_product['count']
-                    cart_product.save()
-                    product.save()
-                    message.append({"id": add_product['id'], "success": True, "message": "product added."})
-            except:
-                message.append({"id": add_product['id'], "success": False, "message": "product not founded!"})
-        return message
-            
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        message = self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
+        message = serializer.save()
         return Response({"message": message}, status=201)
-
     
+
 class DeleteFromCartAPIView(DestroyAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = DeleteFromCartSerializer
@@ -64,8 +74,10 @@ class DeleteFromCartAPIView(DestroyAPIView):
     def destroy(self, request, *args, **kwargs):
         user = request.user
         cart, created = Cart.objects.get_or_create(user=user, open=True)
-        products = request.data.get('products')
-        if products[0] == "all":
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        products = serializer.validated_data['products']
+        if products == "all":
             cart_products = CartProduct.objects.filter(cart=cart)
             cart_products.delete()
             return Response({"message": "All products removed."}, status=204)
